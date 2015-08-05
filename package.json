@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/benwestrate/mainstay/issues"
   },
-  "homepage": "https://github.com/benwestrate/mainstay#readme"
+  "homepage": "https://github.com/benwestrate/mainstay#readme",
+  "dependencies" : {
+      "react" : "^0.13.2"
+  }
 }
