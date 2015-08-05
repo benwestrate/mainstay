@@ -52,7 +52,7 @@ module.exports = function (pageComponents, templateComponents) {
 
                             React.render(React.createElement(templateComponent.component, {
                                 config: instance.config,
-                                data: data }), document.querySelector('[data-hook="' + instance.hook + '"]'));
+                                data: data }), document.querySelector('[data-hook="' + data.hook + '"]'));
                         }
                     }
                 } else {

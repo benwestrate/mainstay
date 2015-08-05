@@ -54,7 +54,7 @@ module.exports = function( pageComponents, templateComponents ){
                                 <templateComponent.component
                                     config={instance.config}
                                     data={data} />,
-                                document.querySelector('[data-hook="' + instance.hook + '"]')
+                                document.querySelector('[data-hook="' + data.hook + '"]')
                             );
                         }
 

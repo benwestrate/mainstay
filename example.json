@@ -1,0 +1,32 @@
+{
+   "components":[
+      {
+         "name":"headerChooser",
+         "instances":[
+            {
+               "id":"header-chooser",
+               "data":[
+                  {
+                     "hook":"/content/test-page/jcr:content/mainpar/testcomponentconfig",
+                     "titleText":"Title 1",
+                     "titleType":"h1"
+                  },
+                  {
+                     "hook":"/content/test-page/jcr:content/mainpar/testcomponent_1",
+                     "titleText":"Title 2",
+                     "titleType":"h2"
+                  },
+                  {
+                     "hook":"/content/test-page/jcr:content/mainpar/testcomponent_2",
+                     "titleText":"Title 3",
+                     "titleType":"h3"
+                  }
+               ],
+               "config":{
+                  "test":"bla"
+               }
+            }
+         ]
+      }
+   ]
+}
