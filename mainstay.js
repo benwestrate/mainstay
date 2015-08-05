@@ -45,9 +45,15 @@ module.exports = function (pageComponents, templateComponents) {
                      */
                     for (var instanceIndex = 0; instanceIndex < component.instances.length; instanceIndex++) {
 
-                        var instanceData = component.instances[instanceIndex].config;
+                        var instance = component.instances[instanceIndex];
 
-                        React.render(React.createElement(templateComponent.component, { data: instanceData }), document.querySelector('[data-hook="' + instanceData.hook + '"]'));
+                        for (var z = 0; z < instance.data.length; z++) {
+                            var data = instanceData.data[z];
+
+                            React.render(React.createElement(templateComponent.component, {
+                                config: instance.config,
+                                data: data }), document.querySelector('[data-hook="' + instanceData.hook + '"]'));
+                        }
                     }
                 } else {
 
@@ -57,9 +63,17 @@ module.exports = function (pageComponents, templateComponents) {
                      */
                     for (var instanceIndex = 0; instanceIndex < component.instances.length; instanceIndex++) {
 
-                        var instanceData = component.instances[instanceIndex].config;
+                        var instance = component.instances[instanceIndex];
 
-                        templateComponent.init(instanceData);
+                        for (var z = 0; z < instance.data.length; z++) {
+
+                            var data = instanceData.data[z];
+
+                            templateComponent.init({
+                                config: instance.config,
+                                data: data
+                            });
+                        }
                     }
                 }
             }

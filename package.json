@@ -1,6 +1,6 @@
 {
   "name": "mainstay",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "The link between the client library and component",
   "main": "mainstay.js",
   "scripts": {

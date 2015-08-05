@@ -45,11 +45,18 @@ module.exports = function( pageComponents, templateComponents ){
                      */
                     for ( let instanceIndex = 0; instanceIndex < component.instances.length; instanceIndex++ ){
 
-                        let instanceData = component.instances[ instanceIndex ].config;
+                        let instance = component.instances[ instanceIndex ];
 
-                        React.render( React.createElement(templateComponent.component, {data: instanceData}),
-                                        document.querySelector('[data-hook="' + instanceData.hook + '"]')
-                                    );
+                        for (var z = 0; z < instance.data.length; z++) {
+                            var data = instanceData.data[z];
+
+                            React.render(
+                                <templateComponent.component
+                                    config={instance.config}
+                                    data={data} />,
+                                document.querySelector('[data-hook="' + instanceData.hook + '"]')
+                            );
+                        }
 
                     }
 
@@ -61,9 +68,20 @@ module.exports = function( pageComponents, templateComponents ){
                      */
                     for ( let instanceIndex = 0; instanceIndex < component.instances.length; instanceIndex++ ){
 
-                        let instanceData = component.instances[ instanceIndex ].config;
+                        let instance = component.instances[ instanceIndex ];
 
-                        templateComponent.init( instanceData );
+                        for (var z = 0; z < instance.data.length; z++) {
+
+                            var data = instanceData.data[z];
+
+                            templateComponent.init(
+                                {
+                                    config : instance.config,
+                                    data: data
+                                }
+                            );
+
+                        }
 
                     }
 
