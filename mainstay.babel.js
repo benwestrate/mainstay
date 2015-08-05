@@ -72,7 +72,7 @@ module.exports = function( pageComponents, templateComponents ){
 
                         for (var z = 0; z < instance.data.length; z++) {
 
-                            var data = instanceData.data[z];
+                            var data = instance.data[z];
 
                             templateComponent.init(
                                 {
