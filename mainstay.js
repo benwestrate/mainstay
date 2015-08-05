@@ -47,7 +47,7 @@ module.exports = function( pageComponents, templateComponents ){
 
                         let instanceData = component.instances[ instanceIndex ].config;
 
-                        React.render( <templateComponent.component data={instanceData} />,
+                        React.render( React.createElement(templateComponent.component, {data: instanceData}),
                                         document.querySelector('[data-hook="' + instanceData.hook + '"]')
                                     );
 
