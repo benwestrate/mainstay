@@ -1,5 +1,5 @@
 # Mainstay
-Mainstay : a person or thing that acts as a chief support or part. ( [dictonary.com](http://dictionary.reference.com/browse/mainstay) )
+The definition of Mainstay : a person or thing that acts as a chief support or part. ( [dictonary.com](http://dictionary.reference.com/browse/mainstay) )
 This module is ment to be the middle piece that links a component that is in a client library built with [Iron(Fe)](https://github.com/jzeltman/iron) and your AEM authored componets. 
 
 ### Install Mainstay
