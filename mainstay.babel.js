@@ -48,13 +48,13 @@ module.exports = function( pageComponents, templateComponents ){
                         let instance = component.instances[ instanceIndex ];
 
                         for (var z = 0; z < instance.data.length; z++) {
-                            var data = instanceData.data[z];
+                            var data = instance.data[z];
 
                             React.render(
                                 <templateComponent.component
                                     config={instance.config}
                                     data={data} />,
-                                document.querySelector('[data-hook="' + instanceData.hook + '"]')
+                                document.querySelector('[data-hook="' + instance.hook + '"]')
                             );
                         }
 
