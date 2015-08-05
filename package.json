@@ -1,0 +1,24 @@
+{
+  "name": "mainstay",
+  "version": "0.1.0",
+  "description": "The link between the client library and component",
+  "main": "mainstay.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/benwestrate/mainstay.git"
+  },
+  "keywords": [
+    "AEM",
+    "Componets",
+    "Clientlibraries"
+  ],
+  "author": "Ben Westrate <ben.westrate@gmail.com> (http://github.com/benwestrate)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/benwestrate/mainstay/issues"
+  },
+  "homepage": "https://github.com/benwestrate/mainstay#readme"
+}
