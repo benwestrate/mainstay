@@ -3,80 +3,99 @@
  */
 
 'use strict';
+/**
+ *  This is the main file for componentInitializer
+ */
 
-var React = require('react');
+var React               = require( 'react' );
+var ReactDOM            = require( 'react-dom' );
+var _                   = require( 'lodash' );
+var Provider            = require( 'react-redux' ).Provider;
 
-module.exports = function (pageComponents, templateComponents) {
+
+module.exports = function( pageComponents, templateComponents ){
+
 
     /*
      * Loop over each component on the page
      */
 
-    for (var i in pageComponents.components) {
+    pageComponents.components.forEach( ( component, number, componentArry ) => {
 
-        var component = pageComponents.components[i];
-
-        /*
-         * Loop over each component included in the template and
-         * render it if its a react component, or initilize it if
-         * its not
+        /**
+         * Check to see if the component matches one included
+         * in the template
          */
 
-        for (var templateComponentName in templateComponents) {
+        if( templateComponents[ component.name ] ){
+            initilizeComponents( templateComponents[ component.name ], component, store, useRedux );
+        }
 
-            var templateComponent = templateComponents[templateComponentName];
+    } );
 
-            /**
-             * Check to see if the component matches one included
-             * in the template
-             */
+    return store;
 
-            if (component.name === templateComponentName) {
+};
 
-                /*
-                 * check to see if the component is a react component
+function initilizeComponents( templateComponent, pageComponent, store,  useRedux ){
+
+    pageComponent.instances.forEach( ( component, number, componentArry ) => {
+
+        /*
+         * check to see if the component is a basic component
+         */
+        if( templateComponent.hasOwnProperty( 'init' ) ){
+
+            if( useRedux ) {
+                templateComponent.init( component.config, component.data, store );
+            } else{
+                templateComponent.init( component.config, component.data );
+            }
+
+        }
+
+        /*
+         * check to see if the component is a react component
+         */
+        if( templateComponent.hasOwnProperty( 'component' ) ){
+
+            if( useRedux ){
+                /**
+                 *  Wrap component in a provider component that will provide
+                 *  the component with the hooks to access the global redux
+                 *  store
                  */
 
-                if (templateComponent.reactComponent) {
+                let elementToBindTo = document.querySelector('[data-hook="' + component.config.hook + '"]');
 
-                    /**
-                     * loop over each instance of the component found on
-                     * the page and initilize it
-                     */
-                    for (var instanceIndex = 0; instanceIndex < component.instances.length; instanceIndex++) {
-
-                        var instance = component.instances[instanceIndex];
-
-                        for (var z = 0; z < instance.data.length; z++) {
-                            var data = instance.data[z];
-
-                            React.render(React.createElement(templateComponent.component, {
-                                config: instance.config,
-                                data: data }), document.querySelector('[data-hook="' + data.hook + '"]'));
-                        }
-                    }
-                } else {
-
-                    /**
-                     * loop over each instance of the component found on
-                     * the page and initilize it
-                     */
-                    for (var instanceIndex = 0; instanceIndex < component.instances.length; instanceIndex++) {
-
-                        var instance = component.instances[instanceIndex];
-
-                        for (var z = 0; z < instance.data.length; z++) {
-
-                            var data = instance.data[z];
-
-                            templateComponent.init({
-                                config: instance.config,
-                                data: data
-                            });
-                        }
-                    }
+                if( elementToBindTo ){
+                    ReactDOM.render(
+                        <Provider store={store}>
+                            <templateComponent.component data={component.config}/>
+                        </Provider>,
+                        elementToBindTo
+                    );
                 }
+            } else {
+
+                /**
+                 * loop over each instance of the component found on
+                 * the page and initilize it
+                 */
+                let elementToBindTo = document.querySelector('[data-hook="' + component.config.hook + '"]');
+
+                if( elementToBindTo ){
+                    ReactDOM.render(
+                        <templateComponent.component data={component.config}/>,
+                        document.querySelector('[data-hook="' + component.config.hook + '"]')
+                    );
+                }
+
             }
+
+
         }
-    }
-};
+
+    } );
+
+}
