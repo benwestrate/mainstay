@@ -1,11 +1,4 @@
-/**
- *  This is the main file for componentInitializer
- */
-
 'use strict';
-/**
- *  This is the main file for componentInitializer
- */
 
 var React               = require( 'react' );
 var ReactDOM            = require( 'react-dom' );
@@ -32,8 +25,6 @@ module.exports = function( pageComponents, templateComponents ){
         }
 
     } );
-
-    return store;
 
 };
 
