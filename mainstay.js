@@ -6,7 +6,7 @@ var _                   = require( 'lodash' );
 var Provider            = require( 'react-redux' ).Provider;
 
 
-module.exports = function( pageComponents, templateComponents ){
+module.exports = function( pageComponents, templateComponents, store,  useRedux ){
 
 
     /*
