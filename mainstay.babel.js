@@ -2,10 +2,12 @@
  *  This is the main file for componentInitializer
  */
 
- var React   	= require( 'react' );
+var React            = require('react');
+var ReactDOM 	     = require( 'react-dom' );
+var { Provider } 	 = require( 'react-redux' );
 
 
-module.exports = function( pageComponents, templateComponents ){
+module.exports = function( pageComponents, templateComponents, store, useRedux ){
 
 
     /*
@@ -50,12 +52,24 @@ module.exports = function( pageComponents, templateComponents ){
                         for (var z = 0; z < instance.data.length; z++) {
                             var data = instance.data[z];
 
-                            React.render(
-                                <templateComponent.component
-                                    config={instance.config}
-                                    data={data} />,
-                                document.querySelector('[data-hook="' + data.hook + '"]')
-                            );
+                            if( useRedux ) {
+                                ReactDOM.render(
+                                    <Provider store={ store }>
+                                        <templateComponent.component
+                                            config={instance.config}
+                                            data={data} />
+                                    </Provider>,
+                                    document.querySelector('[data-hook="' + data.hook + '"]')
+                                );
+                            } else {
+                                ReactDOM.render(
+                                    <templateComponent.component
+                                        config={instance.config}
+                                        data={data} />,
+                                    document.querySelector('[data-hook="' + data.hook + '"]')
+                                );
+                            }
+
                         }
 
                     }

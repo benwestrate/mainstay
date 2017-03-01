@@ -1,10 +1,16 @@
+'use strict';
+
 /**
  *  This is the main file for componentInitializer
  */
 
 var React = require('react');
+var ReactDOM = require('react-dom');
 
-module.exports = function (pageComponents, templateComponents) {
+var _require = require('react-redux'),
+    Provider = _require.Provider;
+
+module.exports = function (pageComponents, templateComponents, store, useRedux) {
 
     /*
      * Loop over each component on the page
@@ -41,16 +47,26 @@ module.exports = function (pageComponents, templateComponents) {
                      * loop over each instance of the component found on
                      * the page and initilize it
                      */
-                    for (let instanceIndex = 0; instanceIndex < component.instances.length; instanceIndex++) {
+                    for (var instanceIndex = 0; instanceIndex < component.instances.length; instanceIndex++) {
 
-                        let instance = component.instances[instanceIndex];
+                        var instance = component.instances[instanceIndex];
 
                         for (var z = 0; z < instance.data.length; z++) {
                             var data = instance.data[z];
 
-                            React.render(React.createElement(templateComponent.component, {
-                                config: instance.config,
-                                data: data }), document.querySelector('[data-hook="' + data.hook + '"]'));
+                            if (useRedux) {
+                                ReactDOM.render(React.createElement(
+                                    Provider,
+                                    { store: store },
+                                    React.createElement(templateComponent.component, {
+                                        config: instance.config,
+                                        data: data })
+                                ), document.querySelector('[data-hook="' + data.hook + '"]'));
+                            } else {
+                                ReactDOM.render(React.createElement(templateComponent.component, {
+                                    config: instance.config,
+                                    data: data }), document.querySelector('[data-hook="' + data.hook + '"]'));
+                            }
                         }
                     }
                 } else {
@@ -59,16 +75,16 @@ module.exports = function (pageComponents, templateComponents) {
                      * loop over each instance of the component found on
                      * the page and initilize it
                      */
-                    for (let instanceIndex = 0; instanceIndex < component.instances.length; instanceIndex++) {
+                    for (var _instanceIndex = 0; _instanceIndex < component.instances.length; _instanceIndex++) {
 
-                        let instance = component.instances[instanceIndex];
+                        var _instance = component.instances[_instanceIndex];
 
-                        for (var z = 0; z < instance.data.length; z++) {
+                        for (var z = 0; z < _instance.data.length; z++) {
 
-                            var data = instance.data[z];
+                            var data = _instance.data[z];
 
                             templateComponent.init({
-                                config: instance.config,
+                                config: _instance.config,
                                 data: data
                             });
                         }
