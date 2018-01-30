@@ -44,7 +44,7 @@ mainstay( pageComponents , clientlibraryComponents, reduxStore, true );
 #### PageComponents
 This is an object of all of the components that are found on the page. The structure of which should follow the structure created by the DataStoar module.
 
-#### ClientLibraryComonents
+#### ClientLibraryComponents
 This is a object with keys that are exactly the same name of each component being found by the DataStoar module.
 
 #### ReduxStore
