@@ -49,7 +49,7 @@ There are 2 or 3 arguments passed to your class constructor. The first is and ob
 
 ## Change Log
 ### v2.0.0 -- Breaking Changes
-- BREAKING CHANGES to the api. Mainstay now exports as its default a class definition which needs to be instantiated with at least two arguments `rootElementKey` and `libraryComponents`. You also will need to call render once mainstay is instantiated.
+- BREAKING CHANGES to the api. Mainstay now exports as its default a class definition which needs to be instantiated with at least one argument `libraryComponents`. You also will need to call render once mainstay is instantiated.
 
 --------
 ### Pre v2 Usage
