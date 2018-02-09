@@ -2,110 +2,142 @@
  *  This is the main file for componentInitializer
  */
 
-var React            = require('react');
-var ReactDOM 	     = require( 'react-dom' );
-var { Provider } 	 = require( 'react-redux' );
+import React        from 'react';
+import ReactDOM 	from 'react-dom';
+import { Provider } from 'react-redux';
+import DataStoar    from 'data-stoar';
 
 
-module.exports = function( pageComponents, templateComponents, store, useRedux ){
+const defaultOptions = {
+    useReduxProvider  : false,
+    reactComponentKey : 'react',
+    rootElementKey    : 'hook',
+    reduxStore        : null,
+    libraryComponents : [],
+}
 
+export class Mainstay {
+    pageComponents       = [];
+    componentsToRender   = [];
+    reactComponents      = [];
+    javascriptComponents = [];
 
-    /*
-     * Loop over each component on the page
-     */
+    constructor( options ){
 
-    for( var i in pageComponents.components ) {
+        options = {
+            ...defaultOptions,
+            ...options
+        }
 
-        var component = pageComponents.components[ i ];
+        if( options.reduxStore !== null ) options.useReduxProvider = true
 
-        /*
-         * Loop over each component included in the template and
-         * render it if its a react component, or initilize it if
-         * its not
-         */
+        this.options = options;
 
-        for( var templateComponentName in templateComponents ){
+        this.getPageData       = this.getPageData.bind( this );
+        this.getPageComponents = this.getPageComponents.bind( this );
+        this.filterComponents  = this.filterComponents.bind( this );
+        this.render            = this.render.bind( this );
+        this.renderReact       = this.renderReact.bind( this );
+        this.renderReactRedux  = this.renderReactRedux.bind( this );
+        this.initilizeJS       = this.initilizeJS.bind( this );
 
-            var templateComponent = templateComponents[ templateComponentName ];
+        this.getPageComponents()
+        this.getPageData()
 
-            /**
-             * Check to see if the component matches one included
-             * in the template
-             */
+    }
 
-            if( component.name === templateComponentName ){
+    getPageComponents(){
+        let pageComponents  = new DataStoar();
+        this.pageComponents = pageComponents.components;
+    }
 
-                /*
-                 * check to see if the component is a react component
-                 */
+    getPageData() {
 
-                if( templateComponent.reactComponent ){
+        this.componentsToRender = this.pageComponents.map( ( pageComponent, index ) => {
 
-                    /**
-                     * loop over each instance of the component found on
-                     * the page and initilize it
-                     */
-                    for ( let instanceIndex = 0; instanceIndex < component.instances.length; instanceIndex++ ){
+            let libComponent = this.options.libraryComponents.find( ( lcpt ) => {
+                return lcpt.name === pageComponent.name
+            } )
 
-                        let instance = component.instances[ instanceIndex ];
+            if( libComponent ){
+                return {
+                    instances : pageComponent.instances,
+                    jsClass     : libComponent
+                }
+            }
+        } )
 
-                        for (var z = 0; z < instance.data.length; z++) {
-                            var data = instance.data[z];
+        this.filterComponents();
 
-                            if( useRedux ) {
-                                ReactDOM.render(
-                                    <Provider store={ store }>
-                                        <templateComponent.component
-                                            config={instance.config}
-                                            data={data} />
-                                    </Provider>,
-                                    document.querySelector('[data-hook="' + data.hook + '"]')
-                                );
-                            } else {
-                                ReactDOM.render(
-                                    <templateComponent.component
-                                        config={instance.config}
-                                        data={data} />,
-                                    document.querySelector('[data-hook="' + data.hook + '"]')
-                                );
-                            }
+    }
 
-                        }
+    filterComponents() {
 
-                    }
+        this.componentsToRender.forEach( ( component ) => {
 
+            component.instances.forEach( ( instance ) => {
+
+                if( instance.data[ this.options.reactComponentKey ] ){
+                    this.reactComponents.push( {
+                        data  : instance.data,
+                        jsClass : component.jsClass
+                    } )
                 } else {
-
-                    /**
-                     * loop over each instance of the component found on
-                     * the page and initilize it
-                     */
-                    for ( let instanceIndex = 0; instanceIndex < component.instances.length; instanceIndex++ ){
-
-                        let instance = component.instances[ instanceIndex ];
-
-                        for (var z = 0; z < instance.data.length; z++) {
-
-                            var data = instance.data[z];
-
-                            templateComponent.init(
-                                {
-                                    config : instance.config,
-                                    data: data
-                                }
-                            );
-
-                        }
-
-                    }
-
+                    this.javascriptComponents.push( {
+                        data  : instance.data,
+                        jsClass : component.jsClass
+                    } )
                 }
 
-            }
+            } )
 
+        } )
 
+    }
+
+    render(){
+
+        if( this.reactComponents.length > 0 ){
+            this.options.useReduxProvider ?
+                  this.renderReactRedux()
+                : this.renderReact()
         }
+
+        if( this.javascriptComponents.length > 0 ){
+            this.initilizeJS()
+        }
+
+    }
+
+    renderReact(){
+        this.reactComponents.forEach( ({ jsClass : Component, data }) => {
+            ReactDOM.render(
+                <Component {...data}/>,
+                document.querySelector(`[data-${this.options.rootElementKey}="${data[this.options.rootElementKey]}"]`)
+            );
+        } )
+    }
+
+    renderReactRedux(){
+        this.reactComponents.forEach( ({ jsClass : Component, data }) => {
+            ReactDOM.render(
+                <Provider store={ this.options.reduxStore }>
+                    <Component {...data} />
+                </Provider>,
+                document.querySelector(`[data-${this.options.rootElementKey}="${data[this.options.rootElementKey]}"]`)
+            );
+        } )
+    }
+
+    initilizeJS(){
+        this.javascriptComponents.forEach( ( { jsClass : Component, data } ) => {
+
+            new Component( data )
+
+        } )
     }
 
 
-};
+}
+
+export default Mainstay
