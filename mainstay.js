@@ -62,7 +62,6 @@ var Mainstay = exports.Mainstay = function () {
         this.initilizeJS = this.initilizeJS.bind(this);
 
         this.getPageComponents();
-        this.getPageData();
     }
 
     _createClass(Mainstay, [{
@@ -70,6 +69,8 @@ var Mainstay = exports.Mainstay = function () {
         value: function getPageComponents() {
             var pageComponents = new _dataStoar2.default();
             this.pageComponents = pageComponents.components;
+
+            this.getPageData();
         }
     }, {
         key: 'getPageData',

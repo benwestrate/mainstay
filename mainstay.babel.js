@@ -42,13 +42,15 @@ export class Mainstay {
         this.initilizeJS       = this.initilizeJS.bind( this );
 
         this.getPageComponents()
-        this.getPageData()
+
 
     }
 
     getPageComponents(){
         let pageComponents  = new DataStoar();
         this.pageComponents = pageComponents.components;
+
+        this.getPageData()
     }
 
     getPageData() {
