@@ -24,7 +24,7 @@ let mainstay = new Mainstay( {
     reactComponentKey : 'react',
     // rootElementKey this is the data attribute that mainstay will use for the react-dom root element. The default is data-hook.
     rootElementKey    : 'hook',
-    //
+    // Array of component class definitions
     libraryComponents : libComponentsList
 } )
 
@@ -36,7 +36,7 @@ mainstay.render()
 |-----------------|--|---------------|-------------|
 | reactComponentKey | no | 'react'     | reactComponentKey if present on the DOM element found by data-stoar mainstay will render a react component
 | rootElementKey| yes | 'hook' | rootElementKey this is the data attribute that mainstay will use to find the element in the DOM. The default selector is `[data-${rootElementKey}="${data[rootElementKey]}"]` which could look like this `document.querySelectorAll([data-hook="123"])`
-| libraryComponents| yes | [] | Every value in this array should be a javascript class definition 
+| libraryComponents| yes | [] | Every value in this array should be a javascript class definition
 | reduxStore| no | null | reduxStore should be an instantiated redux store. If this value is passed mainstay will wrap all react components in the redux Provider component. For non react components mainstay will pass the store as the final argument when calling the class constructor.  
 ### Pre v2 Usage
 *BELOW IS ONLY FOR VERSION 1.X*
