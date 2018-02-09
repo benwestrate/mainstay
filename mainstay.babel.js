@@ -111,29 +111,37 @@ export class Mainstay {
 
     renderReact(){
         this.reactComponents.forEach( ({ jsClass : Component, data }) => {
-            ReactDOM.render(
-                <Component {...data}/>,
-                document.querySelector(`[data-${this.options.rootElementKey}="${data[this.options.rootElementKey]}"]`)
-            );
+            let el = data.element
+                ? data.element
+                : document.querySelector(
+                    `[data-${this.options.rootElementKey}="${data[this.options.rootElementKey]}"]`);
+            ReactDOM.render( <Component {...data}/>, el);
         } )
     }
 
     renderReactRedux(){
         this.reactComponents.forEach( ({ jsClass : Component, data }) => {
+            let el = data.element
+                ? data.element
+                : document.querySelector(
+                    `[data-${this.options.rootElementKey}="${data[this.options.rootElementKey]}"]`);
+
             ReactDOM.render(
                 <Provider store={ this.options.reduxStore }>
                     <Component {...data} />
-                </Provider>,
-                document.querySelector(`[data-${this.options.rootElementKey}="${data[this.options.rootElementKey]}"]`)
-            );
+                </Provider>, el );
         } )
     }
 
     initilizeJS(){
         this.javascriptComponents.forEach( ( { jsClass : Component, data } ) => {
-
-            new Component( data )
-
+            let el = data.element
+                ? data.element
+                : document.querySelector(
+                    `[data-${this.options.rootElementKey}="${data[this.options.rootElementKey]}"]`);
+            this.options.useReduxProvider
+                ? new Component( data, el )
+                : new Component( data, el, this.options.reduxStore )
         } )
     }
 

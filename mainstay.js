@@ -136,7 +136,8 @@ var Mainstay = exports.Mainstay = function () {
                 var Component = _ref.jsClass,
                     data = _ref.data;
 
-                _reactDom2.default.render(_react2.default.createElement(Component, data), document.querySelector('[data-' + _this3.options.rootElementKey + '="' + data[_this3.options.rootElementKey] + '"]'));
+                var el = data.element ? data.element : document.querySelector('[data-' + _this3.options.rootElementKey + '="' + data[_this3.options.rootElementKey] + '"]');
+                _reactDom2.default.render(_react2.default.createElement(Component, data), el);
             });
         }
     }, {
@@ -148,22 +149,26 @@ var Mainstay = exports.Mainstay = function () {
                 var Component = _ref2.jsClass,
                     data = _ref2.data;
 
+                var el = data.element ? data.element : document.querySelector('[data-' + _this4.options.rootElementKey + '="' + data[_this4.options.rootElementKey] + '"]');
+
                 _reactDom2.default.render(_react2.default.createElement(
                     _reactRedux.Provider,
                     { store: _this4.options.reduxStore },
                     _react2.default.createElement(Component, data)
-                ), document.querySelector('[data-' + _this4.options.rootElementKey + '="' + data[_this4.options.rootElementKey] + '"]'));
+                ), el);
             });
         }
     }, {
         key: 'initilizeJS',
         value: function initilizeJS() {
+            var _this5 = this;
+
             this.javascriptComponents.forEach(function (_ref3) {
                 var Component = _ref3.jsClass,
                     data = _ref3.data;
 
-
-                new Component(data);
+                var el = data.element ? data.element : document.querySelector('[data-' + _this5.options.rootElementKey + '="' + data[_this5.options.rootElementKey] + '"]');
+                _this5.options.useReduxProvider ? new Component(data, el) : new Component(data, el, _this5.options.reduxStore);
             });
         }
     }]);
