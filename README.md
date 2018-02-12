@@ -48,6 +48,8 @@ Each attribute that is gathered by the [data-stoar](https://github.com/jzeltman/
 There are 2 or 3 arguments passed to your class constructor. The first is and object of the data found by the [data-stoar](https://github.com/jzeltman/data-stoar). The second is the DOM element that was found either by finding the element with the rootElementKey or the element passed by the data-stoar. The third argument passed to the constructor is the redux store. This is only passed if a redux store is passed into the options object with instantiating mainstay.
 
 ## Change Log
+### v2.0.1 -- Bug Fixes
+- fixed a bug where mainstay incorrectly named a component wrapped in a react-redux connect higher order function
 ### v2.0.0 -- Breaking Changes
 - BREAKING CHANGES to the api. Mainstay now exports as its default a class definition which needs to be instantiated with at least one argument `libraryComponents`. You also will need to call render once mainstay is instantiated.
 
@@ -83,4 +85,3 @@ var reduxStore = /* redux init function */
 mainstay( pageComponents , clientlibraryComponents, reduxStore, true );
 
 ```
-

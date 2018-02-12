@@ -57,14 +57,23 @@ export class Mainstay {
 
         this.componentsToRender = this.pageComponents.map( ( pageComponent, index ) => {
 
-            let libComponent = this.options.libraryComponents.find( ( lcpt ) => {
-                return lcpt.name === pageComponent.name
+            let libComponent = this.options.libraryComponents.find( ( libraryComponent ) => {
+                if( libraryComponent.name === 'Connect' ){
+                    return libraryComponent.WrappedComponent.name === pageComponent.name;
+                } else {
+                    return libraryComponent.name === pageComponent.name;
+                }
             } )
 
             if( libComponent ){
                 return {
                     instances : pageComponent.instances,
-                    jsClass     : libComponent
+                    jsClass   : libComponent
+                }
+            } else {
+                return {
+                    instances: [],
+                    jsClass: null
                 }
             }
         } )

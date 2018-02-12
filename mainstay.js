@@ -79,14 +79,23 @@ var Mainstay = exports.Mainstay = function () {
 
             this.componentsToRender = this.pageComponents.map(function (pageComponent, index) {
 
-                var libComponent = _this.options.libraryComponents.find(function (lcpt) {
-                    return lcpt.name === pageComponent.name;
+                var libComponent = _this.options.libraryComponents.find(function (libraryComponent) {
+                    if (libraryComponent.name === 'Connect') {
+                        return libraryComponent.WrappedComponent.name === pageComponent.name;
+                    } else {
+                        return libraryComponent.name === pageComponent.name;
+                    }
                 });
 
                 if (libComponent) {
                     return {
                         instances: pageComponent.instances,
                         jsClass: libComponent
+                    };
+                } else {
+                    return {
+                        instances: [],
+                        jsClass: null
                     };
                 }
             });
