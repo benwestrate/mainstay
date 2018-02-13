@@ -67,6 +67,7 @@ var Mainstay = exports.Mainstay = function () {
     _createClass(Mainstay, [{
         key: 'getPageComponents',
         value: function getPageComponents() {
+            this.pageComponents = null;
             var pageComponents = new _dataStoar2.default();
             this.pageComponents = pageComponents.components;
 
@@ -180,6 +181,38 @@ var Mainstay = exports.Mainstay = function () {
                 var el = data.element ? data.element : document.querySelector('[data-' + _this5.options.rootElementKey + '="' + data[_this5.options.rootElementKey] + '"]');
                 _this5.options.useReduxProvider ? new Component(data, el) : new Component(data, el, _this5.options.reduxStore);
             });
+        }
+    }, {
+        key: 'unmount',
+        value: function unmount() {
+            var _this6 = this;
+
+            this.reactComponents.forEach(function (_ref4) {
+                var Component = _ref4.jsClass,
+                    data = _ref4.data;
+
+
+                var el = data.element ? data.element : document.querySelector('[data-' + _this6.options.rootElementKey + '="' + data[_this6.options.rootElementKey] + '"]');
+
+                _reactDom2.default.unmountComponentAtNode(el);
+            });
+        }
+    }, {
+        key: 'reRender',
+        value: function reRender() {
+            var _this7 = this;
+
+            this.unmount();
+
+            this.componentsToRender = [];
+            this.reactComponents = [];
+            this.javascriptComponents = [];
+
+            this.getPageComponents();
+
+            setTimeout(function () {
+                _this7.render();
+            }, 100);
         }
     }]);
 

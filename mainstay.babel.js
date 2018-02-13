@@ -47,6 +47,7 @@ export class Mainstay {
     }
 
     getPageComponents(){
+        this.pageComponents = null;
         let pageComponents  = new DataStoar();
         this.pageComponents = pageComponents.components;
 
@@ -156,7 +157,34 @@ export class Mainstay {
         } )
     }
 
+    unmount(){
 
+        this.reactComponents.forEach( ({ jsClass : Component, data }) => {
+
+            let el = data.element
+                ? data.element
+                : document.querySelector(
+                    `[data-${this.options.rootElementKey}="${data[this.options.rootElementKey]}"]`);
+
+            ReactDOM.unmountComponentAtNode(el)
+        })
+
+    }
+
+    reRender(){
+        this.unmount();
+
+        this.componentsToRender = [];
+        this.reactComponents = [];
+        this.javascriptComponents = [];
+
+        this.getPageComponents();
+
+        setTimeout( () => {
+            this.render();
+        }, 100 )
+
+    }
 }
 
 export default Mainstay
