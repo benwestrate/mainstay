@@ -45,6 +45,7 @@ var Mainstay = exports.Mainstay = function () {
         this.componentsToRender = [];
         this.reactComponents = [];
         this.javascriptComponents = [];
+        this.instances = [];
 
 
         options = _extends({}, defaultOptions, options);
@@ -58,8 +59,9 @@ var Mainstay = exports.Mainstay = function () {
         this.filterComponents = this.filterComponents.bind(this);
         this.render = this.render.bind(this);
         this.renderReact = this.renderReact.bind(this);
-        this.renderReactRedux = this.renderReactRedux.bind(this);
+        this.renderAllReactComponents = this.renderAllReactComponents.bind(this);
         this.initilizeJS = this.initilizeJS.bind(this);
+        this.initilizeAllJSComponents = this.initilizeAllJSComponents.bind(this);
 
         this.getPageComponents();
     }
@@ -111,18 +113,26 @@ var Mainstay = exports.Mainstay = function () {
             this.componentsToRender.forEach(function (component) {
 
                 component.instances.forEach(function (instance) {
-
+                    var type = null;
                     if (instance.data[_this2.options.reactComponentKey]) {
                         _this2.reactComponents.push({
                             data: instance.data,
                             jsClass: component.jsClass
                         });
+                        type = 'react';
                     } else {
                         _this2.javascriptComponents.push({
                             data: instance.data,
                             jsClass: component.jsClass
                         });
+                        type = 'js';
                     }
+
+                    _this2.instances.push({
+                        data: instance.data,
+                        jsClass: component.jsClass,
+                        type: type
+                    });
                 });
             });
         }
@@ -131,76 +141,78 @@ var Mainstay = exports.Mainstay = function () {
         value: function render() {
 
             if (this.reactComponents.length > 0) {
-                this.options.useReduxProvider ? this.renderReactRedux() : this.renderReact();
+                this.renderAllReactComponents();
             }
 
             if (this.javascriptComponents.length > 0) {
-                this.initilizeJS();
+                this.initilizeAllJSComponents();
             }
         }
     }, {
-        key: 'renderReact',
-        value: function renderReact() {
-            var _this3 = this;
-
-            this.reactComponents.forEach(function (_ref) {
-                var Component = _ref.jsClass,
-                    data = _ref.data;
-
-                var el = data.element ? data.element : document.querySelector('[data-' + _this3.options.rootElementKey + '="' + data[_this3.options.rootElementKey] + '"]');
-                _reactDom2.default.render(_react2.default.createElement(Component, data), el);
-            });
+        key: 'renderAllReactComponents',
+        value: function renderAllReactComponents() {
+            this.reactComponents.forEach(this.renderReact);
         }
     }, {
-        key: 'renderReactRedux',
-        value: function renderReactRedux() {
-            var _this4 = this;
+        key: 'initilizeAllJSComponents',
+        value: function initilizeAllJSComponents() {
+            this.javascriptComponents.forEach(this.initilizeJS);
+        }
+    }, {
+        key: 'renderReact',
+        value: function renderReact(_ref) {
+            var Component = _ref.jsClass,
+                data = _ref.data;
 
-            this.reactComponents.forEach(function (_ref2) {
-                var Component = _ref2.jsClass,
-                    data = _ref2.data;
+            var el = data.element ? data.element : document.querySelector('[data-' + this.options.rootElementKey + '="' + data[this.options.rootElementKey] + '"]');
 
-                var el = data.element ? data.element : document.querySelector('[data-' + _this4.options.rootElementKey + '="' + data[_this4.options.rootElementKey] + '"]');
-
+            if (this.options.useReduxProvider) {
                 _reactDom2.default.render(_react2.default.createElement(
                     _reactRedux.Provider,
-                    { store: _this4.options.reduxStore },
+                    { store: this.options.reduxStore },
                     _react2.default.createElement(Component, data)
                 ), el);
-            });
+            } else {
+                _reactDom2.default.render(_react2.default.createElement(Component, data), el);
+            }
         }
     }, {
         key: 'initilizeJS',
-        value: function initilizeJS() {
-            var _this5 = this;
+        value: function initilizeJS(_ref2) {
+            var Component = _ref2.jsClass,
+                data = _ref2.data;
 
-            this.javascriptComponents.forEach(function (_ref3) {
-                var Component = _ref3.jsClass,
-                    data = _ref3.data;
-
-                var el = data.element ? data.element : document.querySelector('[data-' + _this5.options.rootElementKey + '="' + data[_this5.options.rootElementKey] + '"]');
-                _this5.options.useReduxProvider ? new Component(data, el) : new Component(data, el, _this5.options.reduxStore);
-            });
+            var el = data.element ? data.element : document.querySelector('[data-' + this.options.rootElementKey + '="' + data[this.options.rootElementKey] + '"]');
+            this.options.useReduxProvider ? new Component(data, el) : new Component(data, el, this.options.reduxStore);
         }
     }, {
         key: 'unmount',
         value: function unmount() {
-            var _this6 = this;
+            var _this3 = this;
 
-            this.reactComponents.forEach(function (_ref4) {
-                var Component = _ref4.jsClass,
-                    data = _ref4.data;
+            this.reactComponents.forEach(function (_ref3) {
+                var Component = _ref3.jsClass,
+                    data = _ref3.data;
 
 
-                var el = data.element ? data.element : document.querySelector('[data-' + _this6.options.rootElementKey + '="' + data[_this6.options.rootElementKey] + '"]');
+                var el = data.element ? data.element : document.querySelector('[data-' + _this3.options.rootElementKey + '="' + data[_this3.options.rootElementKey] + '"]');
 
                 _reactDom2.default.unmountComponentAtNode(el);
             });
         }
     }, {
+        key: 'reset',
+        value: function reset() {
+            this.unmount();
+            this.componentsToRender = [];
+            this.reactComponents = [];
+            this.javascriptComponents = [];
+            this.instances = [];
+        }
+    }, {
         key: 'reRender',
         value: function reRender() {
-            var _this7 = this;
+            var _this4 = this;
 
             this.unmount();
 
@@ -211,8 +223,24 @@ var Mainstay = exports.Mainstay = function () {
             this.getPageComponents();
 
             setTimeout(function () {
-                _this7.render();
+                _this4.render();
             }, 100);
+        }
+    }, {
+        key: 'reRenderComponent',
+        value: function reRenderComponent(componentId) {
+            var _this5 = this;
+
+            this.getPageComponents();
+
+            this.instances.forEach(function (component) {
+
+                if (component.data[_this5.options.rootElementKey] === componentId) {
+
+                    if (component.type === 'react') _this5.renderReact(component);
+                    if (component.type === 'js') _this5.initilizeJS(component);
+                }
+            });
         }
     }]);
 

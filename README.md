@@ -47,7 +47,7 @@ Each attribute that is gathered by the [data-stoar](https://github.com/jzeltman/
 #### What gets passed to my javascript class constructor?
 There are 2 or 3 arguments passed to your class constructor. The first is and object of the data found by the [data-stoar](https://github.com/jzeltman/data-stoar). The second is the DOM element that was found either by finding the element with the rootElementKey or the element passed by the data-stoar. The third argument passed to the constructor is the redux store. This is only passed if a redux store is passed into the options object with instantiating mainstay.
 
-### Re-Render
+### Re-Render all page components
 ```javascript
 import Mainstay from 'mainstay';
 
@@ -66,7 +66,28 @@ mainstay.rerender()
 
 ```
 
+### Re-Render one component
+```javascript
+import Mainstay from 'mainstay';
+
+let mainstay = new Mainstay( {
+    // reactComponentKey if present on the DOM element found by data-stoar mainstay will render a react component
+    reactComponentKey : 'react',
+    // rootElementKey this is the data attribute that mainstay will use for the react-dom root element. The default is data-hook.
+    rootElementKey    : 'hook',
+    // Array of component class definitions
+    libraryComponents : libComponentsList
+} )
+
+/// Later in your code
+
+mainstay.reRenderComponent( '${componentId}' )
+
+```
+
 ## Change Log
+### v2.2.0 -- Feature Re-Render Component
+- Added the ability to re-render a specified component
 ### v2.1.0 -- Feature Re-Render
 - Added the ability to re-render all rendered components
 ### v2.0.1 -- Bug Fixes
