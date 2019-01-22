@@ -2,24 +2,20 @@
  *  This is the main file for componentInitializer
  */
 
-import React        from 'react';
-import ReactDOM 	from 'react-dom';
-import { Provider } from 'react-redux';
 import DataStoar    from 'data-stoar';
 
 
 const defaultOptions = {
-    useReduxProvider  : false,
-    reactComponentKey : 'react',
     rootElementKey    : 'hook',
-    reduxStore        : null,
     libraryComponents : [],
+    renderKey         : null,
+    additionalProps   : null
 }
 
 export class Mainstay {
     pageComponents       = [];
     componentsToRender   = [];
-    reactComponents      = [];
+    renderComponents     = [];
     javascriptComponents = [];
     instances            = [];
 
@@ -30,7 +26,10 @@ export class Mainstay {
             ...options
         }
 
-        if( options.reduxStore !== null ) options.useReduxProvider = true
+        if( options.renderFunction ) {
+            if( !options.renderKey ) throw "You need a 'renderKey' if you intend to use the render function";
+            if( !options.unmount ) throw "You need to define an 'unmount' function if intend to use the render function";
+        }
 
         this.options = options;
 
@@ -38,10 +37,10 @@ export class Mainstay {
         this.getPageComponents             = this.getPageComponents.bind( this );
         this.filterComponents              = this.filterComponents.bind( this );
         this.render                        = this.render.bind( this );
-        this.renderReact                   = this.renderReact.bind(this);
-        this.renderAllReactComponents      = this.renderAllReactComponents.bind( this );
-        this.initilizeJS                   = this.initilizeJS.bind( this );
-        this.initilizeAllJSComponents      = this.initilizeAllJSComponents.bind( this );
+        this.renderFunction                = this.renderFunction.bind(this);
+        this.customRenderFunction          = this.customRenderFunction.bind( this );
+        this.initializeJS                  = this.initializeJS.bind( this );
+        this.initializeAllJSComponents     = this.initializeAllJSComponents.bind( this );
 
         this.getPageComponents()
 
@@ -91,12 +90,12 @@ export class Mainstay {
 
             component.instances.forEach( ( instance ) => {
                 let type = null;
-                if( instance.data[ this.options.reactComponentKey ] ){
-                    this.reactComponents.push( {
+                if( instance.data[ this.options.renderKey ] ){
+                    this.renderComponents.push( {
                         data  : instance.data,
                         jsClass : component.jsClass
                     } )
-                    type = 'react'
+                    type = 'renderFunction'
                 } else {
                     this.javascriptComponents.push( {
                         data  : instance.data,
@@ -118,61 +117,54 @@ export class Mainstay {
 
     render(){
 
-        if( this.reactComponents.length > 0 ){
-            this.renderAllReactComponents()
+        if( this.renderComponents.length > 0 ){
+            this.customRenderFunction()
         }
 
         if( this.javascriptComponents.length > 0 ){
-            this.initilizeAllJSComponents()
+            this.initializeAllJSComponents()
         }
 
     }
 
-    renderAllReactComponents(){
-        this.reactComponents.forEach( this.renderReact )
+    customRenderFunction(){
+        this.renderComponents.forEach( this.renderFunction )
     }
 
-    initilizeAllJSComponents(){
-        this.javascriptComponents.forEach( this.initilizeJS )
+    initializeAllJSComponents(){
+        this.javascriptComponents.forEach( this.initializeJS )
     }
 
-    renderReact( { jsClass : Component, data } ) {
+    renderFunction({ jsClass : Component, data } ) {
         let el = data.element
             ? data.element
             : document.querySelector(
                 `[data-${this.options.rootElementKey}="${data[this.options.rootElementKey]}"]`);
-
-        if( this.options.useReduxProvider ){
-            ReactDOM.render(
-                <Provider store={ this.options.reduxStore }>
-                    <Component {...data} />
-                </Provider>, el );
-        } else {
-            ReactDOM.render( <Component {...data}/>, el);
-        }
-
+        this.options.additionalProps ?
+            this.options.renderFunction( {...this.options.additionalProps,...data}, el, Component ) :
+            this.options.renderFunction( data, el, Component );
     }
 
-    initilizeJS( { jsClass : Component, data } ) {
+    initializeJS({ jsClass : Component, data } ) {
         let el = data.element
             ? data.element
             : document.querySelector(
                 `[data-${this.options.rootElementKey}="${data[this.options.rootElementKey]}"]`);
-        this.options.useReduxProvider
-            ? new Component( data, el )
-            : new Component( data, el, this.options.reduxStore )
+        this.options.additionalProps
+            ? new Component( {...this.options.additionalProps,...data}, el)
+            : new Component( data, el )
     }
 
     unmount(){
 
-        this.reactComponents.forEach( ({ jsClass : Component, data }) => {
+        this.renderComponents.forEach( ({ jsClass : Component, data }) => {
 
             let el = data.element
                 ? data.element
                 : document.querySelector(
                     `[data-${this.options.rootElementKey}="${data[this.options.rootElementKey]}"]`);
 
-            ReactDOM.unmountComponentAtNode(el)
+            this.options.unmount(el, data, Component);
         })
 
     }
@@ -180,7 +172,7 @@ export class Mainstay {
     reset(){
         this.unmount();
         this.componentsToRender   = [];
-        this.reactComponents      = [];
+        this.renderComponents     = [];
         this.javascriptComponents = [];
         this.instances            = [];
     }
@@ -189,7 +181,7 @@ export class Mainstay {
         this.unmount();
 
         this.componentsToRender = [];
-        this.reactComponents = [];
+        this.renderComponents = [];
         this.javascriptComponents = [];
 
         this.getPageComponents();
@@ -207,8 +199,8 @@ export class Mainstay {
 
             if( component.data[this.options.rootElementKey] === componentId ){
 
-                if( component.type === 'react' ) this.renderReact( component )
-                if( component.type === 'js' ) this.initilizeJS( component )
+                if( component.type === 'renderFunction' ) this.renderFunction( component )
+                if( component.type === 'js' ) this.initializeJS( component )
 
             }
 

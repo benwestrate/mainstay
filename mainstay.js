@@ -11,16 +11,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       *  This is the main file for componentInitializer
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-var _reactDom = require('react-dom');
-
-var _reactDom2 = _interopRequireDefault(_reactDom);
-
-var _reactRedux = require('react-redux');
-
 var _dataStoar = require('data-stoar');
 
 var _dataStoar2 = _interopRequireDefault(_dataStoar);
@@ -30,11 +20,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var defaultOptions = {
-    useReduxProvider: false,
-    reactComponentKey: 'react',
     rootElementKey: 'hook',
-    reduxStore: null,
-    libraryComponents: []
+    libraryComponents: [],
+    renderKey: null,
+    additionalProps: null
 };
 
 var Mainstay = exports.Mainstay = function () {
@@ -43,14 +32,17 @@ var Mainstay = exports.Mainstay = function () {
 
         this.pageComponents = [];
         this.componentsToRender = [];
-        this.reactComponents = [];
+        this.renderComponents = [];
         this.javascriptComponents = [];
         this.instances = [];
 
 
         options = _extends({}, defaultOptions, options);
 
-        if (options.reduxStore !== null) options.useReduxProvider = true;
+        if (options.renderFunction) {
+            if (!options.renderKey) throw "You need a 'renderKey' if you intend to use the render function";
+            if (!options.unmount) throw "You need to define an 'unmount' function if intend to use the render function";
+        }
 
         this.options = options;
 
@@ -58,10 +50,10 @@ var Mainstay = exports.Mainstay = function () {
         this.getPageComponents = this.getPageComponents.bind(this);
         this.filterComponents = this.filterComponents.bind(this);
         this.render = this.render.bind(this);
-        this.renderReact = this.renderReact.bind(this);
-        this.renderAllReactComponents = this.renderAllReactComponents.bind(this);
-        this.initilizeJS = this.initilizeJS.bind(this);
-        this.initilizeAllJSComponents = this.initilizeAllJSComponents.bind(this);
+        this.renderFunction = this.renderFunction.bind(this);
+        this.customRenderFunction = this.customRenderFunction.bind(this);
+        this.initializeJS = this.initializeJS.bind(this);
+        this.initializeAllJSComponents = this.initializeAllJSComponents.bind(this);
 
         this.getPageComponents();
     }
@@ -114,12 +106,12 @@ var Mainstay = exports.Mainstay = function () {
 
                 component.instances.forEach(function (instance) {
                     var type = null;
-                    if (instance.data[_this2.options.reactComponentKey]) {
-                        _this2.reactComponents.push({
+                    if (instance.data[_this2.options.renderKey]) {
+                        _this2.renderComponents.push({
                             data: instance.data,
                             jsClass: component.jsClass
                         });
-                        type = 'react';
+                        type = 'renderFunction';
                     } else {
                         _this2.javascriptComponents.push({
                             data: instance.data,
@@ -140,64 +132,55 @@ var Mainstay = exports.Mainstay = function () {
         key: 'render',
         value: function render() {
 
-            if (this.reactComponents.length > 0) {
-                this.renderAllReactComponents();
+            if (this.renderComponents.length > 0) {
+                this.customRenderFunction();
             }
 
             if (this.javascriptComponents.length > 0) {
-                this.initilizeAllJSComponents();
+                this.initializeAllJSComponents();
             }
         }
     }, {
-        key: 'renderAllReactComponents',
-        value: function renderAllReactComponents() {
-            this.reactComponents.forEach(this.renderReact);
+        key: 'customRenderFunction',
+        value: function customRenderFunction() {
+            this.renderComponents.forEach(this.renderFunction);
         }
     }, {
-        key: 'initilizeAllJSComponents',
-        value: function initilizeAllJSComponents() {
-            this.javascriptComponents.forEach(this.initilizeJS);
+        key: 'initializeAllJSComponents',
+        value: function initializeAllJSComponents() {
+            this.javascriptComponents.forEach(this.initializeJS);
         }
     }, {
-        key: 'renderReact',
-        value: function renderReact(_ref) {
+        key: 'renderFunction',
+        value: function renderFunction(_ref) {
             var Component = _ref.jsClass,
                 data = _ref.data;
 
             var el = data.element ? data.element : document.querySelector('[data-' + this.options.rootElementKey + '="' + data[this.options.rootElementKey] + '"]');
-
-            if (this.options.useReduxProvider) {
-                _reactDom2.default.render(_react2.default.createElement(
-                    _reactRedux.Provider,
-                    { store: this.options.reduxStore },
-                    _react2.default.createElement(Component, data)
-                ), el);
-            } else {
-                _reactDom2.default.render(_react2.default.createElement(Component, data), el);
-            }
+            this.options.additionalProps ? this.options.renderFunction(_extends({}, this.options.additionalProps, data), el, Component) : this.options.renderFunction(data, el, Component);
         }
     }, {
-        key: 'initilizeJS',
-        value: function initilizeJS(_ref2) {
+        key: 'initializeJS',
+        value: function initializeJS(_ref2) {
             var Component = _ref2.jsClass,
                 data = _ref2.data;
 
             var el = data.element ? data.element : document.querySelector('[data-' + this.options.rootElementKey + '="' + data[this.options.rootElementKey] + '"]');
-            this.options.useReduxProvider ? new Component(data, el) : new Component(data, el, this.options.reduxStore);
+            this.options.additionalProps ? new Component(_extends({}, this.options.additionalProps, data), el) : new Component(data, el);
         }
     }, {
         key: 'unmount',
         value: function unmount() {
             var _this3 = this;
 
-            this.reactComponents.forEach(function (_ref3) {
+            this.renderComponents.forEach(function (_ref3) {
                 var Component = _ref3.jsClass,
                     data = _ref3.data;
 
 
                 var el = data.element ? data.element : document.querySelector('[data-' + _this3.options.rootElementKey + '="' + data[_this3.options.rootElementKey] + '"]');
 
-                _reactDom2.default.unmountComponentAtNode(el);
+                _this3.options.unmount(el, data, Component);
             });
         }
     }, {
@@ -205,7 +188,7 @@ var Mainstay = exports.Mainstay = function () {
         value: function reset() {
             this.unmount();
             this.componentsToRender = [];
-            this.reactComponents = [];
+            this.renderComponents = [];
             this.javascriptComponents = [];
             this.instances = [];
         }
@@ -217,7 +200,7 @@ var Mainstay = exports.Mainstay = function () {
             this.unmount();
 
             this.componentsToRender = [];
-            this.reactComponents = [];
+            this.renderComponents = [];
             this.javascriptComponents = [];
 
             this.getPageComponents();
@@ -237,8 +220,8 @@ var Mainstay = exports.Mainstay = function () {
 
                 if (component.data[_this5.options.rootElementKey] === componentId) {
 
-                    if (component.type === 'react') _this5.renderReact(component);
-                    if (component.type === 'js') _this5.initilizeJS(component);
+                    if (component.type === 'renderFunction') _this5.renderFunction(component);
+                    if (component.type === 'js') _this5.initializeJS(component);
                 }
             });
         }
