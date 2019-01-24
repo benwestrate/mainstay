@@ -1,5 +1,5 @@
 # Mainstay
-The definition of Mainstay : a person or thing that acts as a chief support or part. ( [dictonary.com](http://dictionary.reference.com/browse/mainstay) )
+The definition of Mainstay: a person or thing that acts as a chief support or part ( [dictonary.com](http://dictionary.reference.com/browse/mainstay) ).
 This module is meant to be the middle piece that links a component that is in a javascript library and your authored components.
 
 ### Install Mainstay
@@ -38,8 +38,8 @@ mainstay.render()
 | Object Property | Required | Default Value | Description |
 |-----------------|--|---------------|-------------|
 | libraryComponents| yes | [] | Every value in this array should be a javascript class definition
-| rootElementKey| no | 'hook' | rootElementKey this is the data attribute that mainstay will use to find the element in the DOM. The default selector is `[data-${rootElementKey}="${data[rootElementKey]}"]` which could look like this `document.querySelectorAll([data-hook="123"])`. This is not required if you are using the data-stoar with data-attributes instead of script tags. If you are using data-attributes the data-stoar will return the element it found the `data-component` on.
-| renderKey| no |   | renderKey this is the data attribute that mainstay will use to decide if the component should be rendered by the custom render function. Add this data attribute to your component to take control of the render pipeline
+| rootElementKey| no | 'hook' | rootElementKey is the data attribute that mainstay will use to find the element in the DOM. The default selector is `[data-${rootElementKey}="${data[rootElementKey]}"]` which could look like this `document.querySelectorAll([data-hook="123"])`. This is not required if you are using the data-stoar with data-attributes instead of script tags. If you are using data-attributes the data-stoar will return the element it found the `data-component` on.
+| renderKey| no |   | renderKey is the data attribute that mainstay will use to decide if the component should be rendered by the custom render function. Add this data attribute to your component to take control of the render pipeline
 | renderFunction | no |      | renderFunction if present is a custom function to take control of the render in your code.
 | unmount| no | null | this function is required if you are using the renderFunction. This will be called on rerender to unmount the currently rendered component before the rerender.  
 
