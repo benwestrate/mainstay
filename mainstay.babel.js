@@ -70,7 +70,7 @@ export class Mainstay {
             if( libComponent ){
                 return {
                     instances : pageComponent.instances,
-                    jsClass   : libComponent
+                    jsClass   : libComponent.component
                 }
             } else {
                 return {
@@ -193,6 +193,7 @@ export class Mainstay {
     }
 
     reRenderComponent( componentId ) {
+        this.reset();
         this.getPageComponents();
 
         this.instances.forEach( ( component ) => {

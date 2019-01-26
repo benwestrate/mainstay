@@ -7,17 +7,28 @@ This module is meant to be the middle piece that links a component that is in a 
 npm install mainstay
 ```
 
-Your components need to have 3 data attributes on them 
+Your components need to have three data attributes on the html tag
 - data-component="MyComponentClass"
 - data-instance="unique-string"
 - data-hook="unique-string"
 
+Your javascript components need to be passed to mainstay in an array of objects. The objects need to have two keys:
+- name: a string that matches the data-component attribute 
+- component: your javascript class or function to be initialized 
+
 ### Basic Usage
 ```js
 import Mainstay from 'mainstay';
-import {
-    MyComponentClass,
-    MyNewComponentClass } from './components';
+
+const MyComponentClass = {
+    'name' : 'MyComponentClass',
+    'component' : (...) => { ... }
+}
+
+const MyNewComponentClass = {
+    'name' : 'MyNewComponentClass',
+    'component' : (...) => { ... }
+}
 
 
 let libComponentsList = [
@@ -53,9 +64,16 @@ There are 2 arguments passed to your class constructor. The first is and object 
 ### Re-Render all page components
 ```javascript
 import Mainstay from 'mainstay';
-import {
-    MyComponentClass,
-    MyNewComponentClass } from './components';
+
+const MyComponentClass = {
+    'name' : 'MyComponentClass',
+    'component' : (...) => { ... }
+}
+
+const MyNewComponentClass = {
+    'name' : 'MyNewComponentClass',
+    'component' : (...) => { ... }
+}
 
 let libComponentsList = [
     MyComponentClass,
@@ -81,9 +99,16 @@ mainstay.rerender()
 ### Re-Render one component
 ```javascript
 import Mainstay from 'mainstay';
-import {
-    MyComponentClass,
-    MyNewComponentClass } from './components';
+
+const MyComponentClass = {
+    'name' : 'MyComponentClass',
+    'component' : (...) => { ... }
+}
+
+const MyNewComponentClass = {
+    'name' : 'MyNewComponentClass',
+    'component' : (...) => { ... }
+}
 
 let libComponentsList = [
     MyComponentClass,
@@ -107,6 +132,8 @@ mainstay.reRenderComponent( '${componentId}' )
 ```
 
 ## Change Log
+### v3.0.1 -- Updated the library components object
+- I changed the library components to needing 'name' and 'component' keys so mainstay no longer relies on function names.
 ### v3.0.0 -- Breaking Changes 
 - I changed the render mechanism to be more agnostic. This means in practice it dose not depend on anything other than [data-stoar](https://github.com/jzeltman/data-stoar). In order to work with react now you will need to add your own render function. 
 ### v2.2.0 -- Feature Re-Render Component

@@ -85,7 +85,7 @@ var Mainstay = exports.Mainstay = function () {
                 if (libComponent) {
                     return {
                         instances: pageComponent.instances,
-                        jsClass: libComponent
+                        jsClass: libComponent.component
                     };
                 } else {
                     return {
@@ -214,6 +214,7 @@ var Mainstay = exports.Mainstay = function () {
         value: function reRenderComponent(componentId) {
             var _this5 = this;
 
+            this.reset();
             this.getPageComponents();
 
             this.instances.forEach(function (component) {
