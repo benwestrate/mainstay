@@ -2,7 +2,7 @@
 The definition of Mainstay: a person or thing that acts as a chief support or part ( [dictonary.com](http://dictionary.reference.com/browse/mainstay) ).
 
 ### Why does Mainstay Exist?
-Building frontend JS applications is hard. Building them in a content management system is even harder. MainStay and DataStore work together to make building reusable JS components straight forward and repeatable. 
+Building frontend JS applications is hard. Building them in a content management system is even harder. MainStay and [DataStore](https://github.com/jzeltman/data-stoar) work together to make building reusable JS components straight forward and repeatable. 
 
 ### Install Mainstay
 ```node
